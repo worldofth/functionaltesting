@@ -1,0 +1,163 @@
+//
+// Forms
+// --------------------------------------------------
+
+label {
+ 	display: inline-block;
+  	margin-bottom: 5px;
+    max-width: 100%;
+}
+
+// Position radios and checkboxes better
+input[type="radio"],
+input[type="checkbox"] {
+	margin: 4px 0 0;
+  	line-height: 1;
+}
+
+// Set the height of file controls to match text inputs
+input[type="file"] {
+	display: block;
+}
+
+// Make range inputs behave like textual form controls
+input[type="range"] {
+ 	display: block;
+ 	width: 100%;
+}
+
+// Make multiple select elements height not fixed
+select[multiple],
+select[size] {
+ 	height: auto;
+}
+
+// Common form controls
+//
+// Shared size and type resets for form controls. Apply `.form-control` to any
+// of the following form controls:
+
+select,
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"]{
+	display: block;
+    width: 100%;
+	padding: 6px 12px;
+	line-height: @line-height;
+	color: @input-color;
+	background-color: @input-bg;
+	background-image: none;
+	border: 1px solid @input-border;
+	border-radius: @input-border-radius;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+
+	// Placeholder
+	.placeholder();
+
+	// Disabled and read-only inputs
+	//
+	// HTML5 says that controls under a fieldset > legend:first-child won't be
+	// disabled if the fieldset is disabled. Due to implementation difficulty, we
+	// don't honor that edge case; we style them as disabled anyway.
+	&[disabled],
+	&[readonly]{
+		cursor: not-allowed;
+		background-color: @input-bg-disabled;
+		opacity: 1;
+	}
+}
+
+// Search inputs in iOS
+//
+// This overrides the extra rounded corners on search inputs in iOS so that our
+// `.form-control` class can properly style them. Note that this cannot simply
+// be added to `.form-control` as it's not specific enough. For details, see
+// https://github.com/twbs/bootstrap/issues/11586.
+
+input[type="search"] {
+ 	-webkit-appearance: none;
+}
+
+
+.radio,
+.checkbox{
+    padding-bottom: 10px;
+    & + &{
+       margin-left: 25px;
+    }
+    > label{
+        white-space: nowrap;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        *{
+            pointer-events: none;
+        }
+    }
+    input{
+        width: 0.1px;
+        height: 0.1px;
+        position: absolute;
+        overflow: hidden;
+        z-index: -1;
+    }
+    input{
+        + label{
+            position: relative;
+            display: inline-block;
+            top: 2px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid @text-color;
+            margin-bottom: 0;
+            margin-right: 4px;
+            max-width: none;
+            &:after{
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 8px;
+                height: 8px;
+                background-color: transparent;
+                border-radius: 50%;
+                .translate(-50%, -50%);
+            }
+        }
+        &:checked + label{
+            &:after{
+                background: @text-color;
+            }
+        }
+    }
+}
+
+.checkbox{
+    input{
+        + label{
+            border-color: @text-color;
+            border-radius: 2px;
+            &:after{
+                border-radius: 2px;
+            }
+        }
+        &:checked + label{
+            &:after{
+                background: @text-color;
+            }
+        }
+    }
+}

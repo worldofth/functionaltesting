@@ -1,0 +1,90 @@
+.form{
+    .container();
+
+    &-column{
+        .base-column();
+        margin-bottom: 30px;
+
+        &-half{
+            .base-column();
+            .column(6);
+            margin-bottom: 30px;
+
+            .form-group{
+                label{
+                    .base-column(both, inside);
+                    .column(3, xs, both, inside);
+                    + *{
+                        .base-column(both, inside);
+                        .column(9, xs, both, inside);
+                    }
+                }
+            }
+            .form-address{
+                label + input ~ input{
+                    .base-column(both, inside);
+                    .column(9, xs, both, inside);
+                    .column-push(3, xs, both, inside);
+                }
+            }
+        }
+    }
+
+    &-group{
+        .nested-container();
+        .align-items(end);
+        & + &{
+            margin-top: 15px;
+        }
+        label{
+            .base-column(both, inside);
+            .column(2, xs, both, inside);
+            @media(min-width: @md-min){
+                text-align: right;
+                padding-right: 10px;
+            }
+            + *{
+                .base-column(both, inside);
+                .column(10, xs, both, inside);
+            }
+        }
+        a{
+            text-decoration: none;
+            &:hover,
+            &:active,
+            &:focus{
+                text-decoration: underline;
+            }
+        }
+
+        .radio > label{
+            width: auto;
+        }
+    }
+
+    &-address{
+        label + input ~ input{
+            .base-column(both, inside);
+            .column(10, xs, both, inside);
+            .column-push(2, xs, both, inside);
+            margin-top: 12px;
+        }
+    }
+
+    &-textarea{
+        label,
+        textarea{
+            .base-column(both, inside);
+        }
+        textarea{
+            margin-top: 10px;
+            min-height: 170px;
+        }
+    }
+
+    &-submit-btn{
+        .nested-container();
+        .justify-content(end);
+        margin-top: 30px;
+    }
+}

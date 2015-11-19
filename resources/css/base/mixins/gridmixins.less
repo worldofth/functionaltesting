@@ -1,0 +1,269 @@
+// Grid System
+// -----------
+
+//Container is used to wrap around the columns
+.container(@gutter: @container-gutter){
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
+    max-width: @max-container-width;
+    .flexbox();
+    .flex-wrap(wrap);
+    .align-content(start);
+    @media (min-width: @lg-min){
+        padding-left:  @gutter;
+        padding-right: @gutter;
+    }
+}
+
+.nested-container(){
+    width: 100%;
+    .flexbox();
+    .flex-wrap(wrap);
+    .align-content(start);
+}
+
+//base column
+//
+//@gutter-push-position - inside/outside
+//  changes between pushing content in with padding
+//  or pushing other columns away with margin
+//
+//@gutter-exclude - right/left/both/none
+//  removes gutters based on option,
+//  should be set both when gutter-push-position is set inside
+//
+.base-column(@gutter-exclude: @default-gutter-exclude, @gutter-push-position: @default-gutter-push-position){
+    #column-mixins.getGutterSizes(@gutter-exclude, @gutter-push-position);
+    #column-mixins.getWidthCalc(100%, @gutter-size);
+    #column-mixins.getGutters(@gutter-push-position, @left, @right);
+}
+
+//column
+//
+//@columns - 1 - @grid-columns / fifths (max column size varible)
+//  the column size out of by default 12, or what ever you set it in the grid varibles
+//  you can set fifths, as out of 12 columns fifths don't appear
+//
+//@breakpoint - xs/sm/md/lg/none
+//  the breakpoint this columns size will appear, using min-width breakpoints
+//
+//@gutter-exclude - right/left/both/none
+//  removes gutters based on option,
+//  should be set both when gutter-push-position is set inside
+//
+//@gutter-push-position - inside/outside
+//  changes between pushing content in with padding
+//  or pushing other columns away with margin
+//
+.column(@columns: @grid-columns, @breakpoint: @default-breakpoint, @gutter-exclude: @default-gutter-exclude, @gutter-push-position: @default-gutter-push-position){
+    #column-mixins.getGridWidth(@columns);
+    #column-mixins.getMinBreakpoint(@breakpoint);
+    #column-mixins.getGutterSizes(@gutter-exclude, @gutter-push-position);
+    #column-mixins.column-width(@gridWidth, @minBreakpoint, @gutter-size, @left, @right, @gutter-push-position);
+}
+
+.column-push(@columns: @grid-columns, @breakpoint: @default-breakpoint, @gutter-exclude: @default-gutter-exclude, @gutter-push-position: @default-gutter-push-position){
+    #column-mixins.getGridWidth(@columns); //gridWidth
+    #column-mixins.getMinBreakpoint(@breakpoint); //minBreakpoint
+    #column-mixins.getGutterSizes(@gutter-exclude, @gutter-push-position);
+    #column-mixins.column-push(@gridWidth, @minBreakpoint, @gutter-size, @left, @right, @gutter-push-position);
+}
+
+
+//column-mixin namespace, to prevent pollution of the global space
+//  very rarely need to use outside of this page
+#column-mixins{
+
+    //prints out the width
+    //
+    //@breakpoint - xs/sm/md/lg/none
+    //  the breakpoint this columns size will appear, using min-width breakpoints
+    //
+    //@gutter-size - calculated
+    //  based on varible in grid varibles, the gutter-push position and the gutter-exclude
+    //
+    //@left - calculated
+    //  normally half the gutter size, but changes based on gutter-exclude
+    //
+    //@right - calculated
+    //  normally half the gutter size, but changes based on gutter-exclude
+    //
+    //@gutter-push-position - inside/outside
+    //  changes between pushing content in with padding
+    //  or pushing other columns away with margin
+    //
+    .column-width(@gridWidth, @breakpoint, @gutter-size, @left, @right, @gutter-push-position) when (@breakpoint = none){
+        .getWidthCalc(@gridWidth, @gutter-size);
+        .getGutters(@gutter-push-position, @left, @right);
+    }
+    .column-width(@gridWidth, @breakpoint, @gutter-size, @left, @right, @gutter-push-position) when (default()){
+        @media (min-width: @breakpoint){
+            .getWidthCalc(@gridWidth, @gutter-size);
+            .getGutters(@gutter-push-position, @left, @right);
+        }
+    }
+
+    .column-push(@gridWidth, @breakpoint, @gutter-size, @left, @right, @gutter-push-position) when (@breakpoint = none){
+        .getCalcLeftPush(@gridWidth, @left);
+        .getGutters(outside, @newLeft, @right);
+    }
+    .column-push(@gridWidth, @breakpoint, @gutter-size, @left, @right, @gutter-push-position) when (default()){
+        @media (min-width: @breakpoint){
+            .getCalcLeftPush(@gridWidth, @left);
+            .getGutters(outside, @newLeft, @right);
+        }
+    }
+
+    .getCalcLeftPush(@gridWidth, @left) when (@left = 0){
+        @newLeft: @gridWidth;
+    }
+    .getCalcLeftPush(@gridWidth, @left) when (default()){
+        @newLeft: calc(@gridWidth ~" +" @left);
+    }
+
+    //prints out the gutters
+    //
+    //@gutter-push-position - inside/outside
+    //  changes between pushing content in with padding
+    //  or pushing other columns away with margin
+    //
+    //@left - calculated
+    //  normally half the gutter size, but changes based on gutter-exclude
+    //
+    //@right - calculated
+    //  normally half the gutter size, but changes based on gutter-exclude
+    //
+    .getGutters(@gutter-push-position, @left, @right) when (@left > 0) and (@right > 0) and (@gutter-push-position = inside){
+        padding-left: @left;
+        padding-right: @right;
+    }
+    .getGutters(@gutter-push-position, @left, @right) when (@left = 0) and (@right > 0) and (@gutter-push-position = inside){
+        padding-right: @right;
+    }
+    .getGutters(@gutter-push-position, @left, @right) when (@left > 0) and (@right = 0) and (@gutter-push-position = inside){
+        padding-left: @left;
+    }
+    .getGutters(@gutter-push-position, @left, @right) when (@left = 0) and (@right > 0) and not (@gutter-push-position = inside){
+        margin-right: @right;
+    }
+    .getGutters(@gutter-push-position, @left, @right) when (@left > 0) and (@right = 0) and not (@gutter-push-position = inside){
+        margin-left: @left;
+    }
+    .getGutters(@gutter-push-position, @left, @right) when (@left > 0) and (@right > 0) and not (@gutter-push-position = inside){
+        margin-left: @left;
+        margin-right: @right;
+    }
+
+    //cacluated the grid widths
+    //
+    //@columns - 1 - @grid-columns / fifths (max column size varible)
+    //  the column size out of by default 12, or what ever you set it in the grid varibles
+    //  you can set fifths, as out of 12 columns fifths don't appear
+    //
+    .getGridWidth(@columns) when (@columns = fifths){
+        @gridWidth: 20%;
+    }
+    .getGridWidth(@columns) when (@columns > @grid-columns){
+        @gridWidth: 100%;
+    }
+    .getGridWidth(@columns) when (@columns < 1){
+        @gridWidth: percentage( 1 / @grid-columns );
+    }
+    .getGridWidth(@columns) when (default()){
+        @gridWidth: percentage( @columns / @grid-columns );
+    }
+
+    //returns breakpoint
+    //
+    //@breakpoint - xs/sm/md/lg/none
+    //  returns the breakpoints setup in the grid varibles based off these short hands
+    //
+    .getMinBreakpoint(@breakpoint) when (@breakpoint = xs){
+        @minBreakpoint: @xs-min;
+    }
+    .getMinBreakpoint(@breakpoint) when (@breakpoint = sm){
+        @minBreakpoint: @sm-min;
+    }
+    .getMinBreakpoint(@breakpoint) when (@breakpoint = md){
+        @minBreakpoint: @md-min;
+    }
+    .getMinBreakpoint(@breakpoint) when (@breakpoint = lg){
+        @minBreakpoint: @lg-min;
+    }
+    .getMinBreakpoint(@breakpoint) when (@breakpoint = none){
+        @minBreakpoint: 0;
+    }
+
+    //calculates gutter sizes
+    //
+    //gutter size is the width removed from the column width to make room for the gutters outside
+    //though if the gutters are inside the column, gutter size if set to 0
+    //left and right are the gutter sizes
+    //
+    //@gutter-exclude - right/left/both/none
+    //  removes gutters based on option,
+    //  should be set both when gutter-push-position is set inside
+    //
+    //@gutter-push-position - inside/outside
+    //  changes between pushing content in with padding
+    //  or pushing other columns away with margin
+    //
+    .getGutterSizes(@gutter-exclude, @gutter-push-position) when (@gutter-exclude = right){
+        @gutter-size: (@grid-gutter-width / 2);
+        @left: (@grid-gutter-width / 2);
+        @right: 0px;
+    }
+    .getGutterSizes(@gutter-exclude, @gutter-push-position) when (@gutter-exclude = left){
+        @gutter-size: (@grid-gutter-width / 2);
+        @left: 0px;
+        @right: (@grid-gutter-width / 2);
+    }
+    .getGutterSizes(@gutter-exclude, @gutter-push-position) when (@gutter-exclude = both){
+        .getGutterWidth(@gutter-push-position);
+        @gutter-size: @position-based-size;
+        @left: 0px;
+        @right: 0px;
+    }
+    .getGutterSizes(@gutter-exclude, @gutter-push-position) when (default()){
+        .getGutterWidth(@gutter-push-position);
+        @gutter-size: @position-based-size;
+        @left: (@grid-gutter-width / 2);
+        @right: (@grid-gutter-width / 2);
+    }
+
+    //returns gutter size on position
+    //
+    //if gutter position is inside we don't want to shrink the width of the container by the gutter size,
+    //but if it's outside we do.
+    //
+    //@gutter-push-position - inside/outside
+    //  changes between pushing content in with padding
+    //  or pushing other columns away with margin
+    //
+    .getGutterWidth(@gutter-push-position) when (@gutter-push-position = inside){
+        @position-based-size: 0px;
+    }
+    .getGutterWidth(@gutter-push-position) when (default()){
+        @position-based-size: @grid-gutter-width;
+    }
+
+
+    //returns width
+    //
+    //get rid of calc if the gutter size if 0 as is invalid css
+    //
+    //@width
+    //  the calculated width passed over
+    //
+    //@gutter-size
+    //  the gutter size to be subtracted from the width
+    .getWidthCalc(@width, @gutter-size) when (@gutter-size = 0){
+        width: @width;
+    }
+
+    .getWidthCalc(@width, @gutter-size) when (default()){
+        width: calc( @width ~" -"@gutter-size);
+    }
+
+}
