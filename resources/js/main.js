@@ -86,6 +86,28 @@
 	var arr = [6,5,8,3,56,98];
 	var test = arr.sort(greaterThanString);
 
-	console.log(test);
+	function curry(f){
+		return function(arg){
+			return f(arg);
+		};
+	}
+
+	function curry2(f){
+		return function(arg1){
+			return function(arg2){
+				return f(arg1, arg2);
+			};
+		};
+	}
+
+	function testFunc(x,y,z){
+		return [x, y, z];
+	}
+
+	var out = _.map(arr, function(x,y,z){
+		curry2(testFunc)(x)(y);
+	});
+
+	console.log(out);
 
 })();
